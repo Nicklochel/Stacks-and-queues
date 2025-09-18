@@ -1,52 +1,109 @@
-# Import the Node class you created in node.py
+# help_desk_queue.py
+"""
+Help desk ticketing system using a custom Queue built from Node (node.py).
+
+Provides a small CLI:
+1. Add customer
+2. Help next customer
+3. View next customer
+4. View all waiting customers
+5. Exit
+"""
+
 from node import Node
 
-# Implement your Queue class here
 class Queue:
-    # Delete the following line and implement your Queue class
-    pass
-    
+    def __init__(self):
+        self.front = None
+        self.rear = None
+
+    def enqueue(self, value):
+        node = Node(value)
+        if not self.front:
+            # empty queue
+            self.front = node
+            self.rear = node
+        else:
+            self.rear.next = node
+            self.rear = node
+
+    def dequeue(self):
+        if not self.front:
+            return None
+        node = self.front
+        self.front = node.next
+        if self.front is None:
+            # queue became empty
+            self.rear = None
+        node.next = None
+        return node.value
+
+    def peek(self):
+        return self.front.value if self.front else None
+
+    def print_queue(self):
+        if not self.front:
+            print("(empty)")
+            return
+        current = self.front
+        while current:
+            print(f"- {current.value}")
+            current = current.next
 
 
-def run_help_desk():
-    # Create an instance of the Queue class
-    
+def help_desk_cli():
+    queue = Queue()
+
+    menu = """--- Help Desk Ticketing System ---
+1. Add customer
+2. Help next customer
+3. View next customer
+4. View all waiting customers
+5. Exit
+Select an option: """
 
     while True:
-        print("\n--- Help Desk Ticketing System ---")
-        print("1. Add customer")
-        print("2. Help next customer")
-        print("3. View next customer")
-        print("4. View all waiting customers")
-        print("5. Exit")
-        choice = input("Select an option: ")
+        try:
+            choice = input(menu).strip()
+        except (EOFError, KeyboardInterrupt):
+            print("\nExiting.")
+            break
 
         if choice == "1":
-            name = input("Enter customer name: ")
-            # Add the customer to the queue
-            
-            
-            print(f"{name} added to the queue.")
-        elif choice == "2":
-            # Help the next customer in the queue and return message that they were helped
-            pass # delete this line
+            name = input("Enter customer name: ").strip()
+            if name == "":
+                print("Customer name cannot be empty.\n")
+                continue
+            queue.enqueue(name)
+            print(f"{name} added to the queue.\n")
 
+        elif choice == "2":
+            helped = queue.dequeue()
+            if helped is None:
+                print("No customers to help.\n")
+            else:
+                print(f"Helped: {helped}\n")
 
         elif choice == "3":
-            # Peek at the next customer in the queue and return their name
-            pass # delete this line
-
+            nxt = queue.peek()
+            if nxt is None:
+                print("Next customer: (none)\n")
+            else:
+                print(f"Next customer: {nxt}\n")
 
         elif choice == "4":
-            # Print all customers in the queue
-            print("\nWaiting customers:")
-            
+            print("Waiting customers:")
+            queue.print_queue()
+            print()
 
         elif choice == "5":
-            print("Exiting Help Desk System.")
+            print("Exiting.")
             break
+
         else:
-            print("Invalid option.")
+            print("Invalid option. Please choose 1-5.\n")
+
 
 if __name__ == "__main__":
-    run_help_desk()
+    help_desk_cli()
+
