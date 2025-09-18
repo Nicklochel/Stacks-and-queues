@@ -1,3 +1,12 @@
-# Implement your Node class here
+# node.py
+"""
+Simple Node class for linked structures.
+"""
+
 class Node:
-    pass # delete this line
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+
+    def __repr__(self):
+        return f"Node({self.value!r})"
